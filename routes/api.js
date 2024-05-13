@@ -27,7 +27,7 @@ module.exports = function (app) {
           throw { error: "Invalid value" };
         }
 
-        let row = (coordinate[0].charCodeAt(0) - 65);
+        let row = (coordinate[0].charCodeAt(0) - 65);     
         let column = coordinate[1];
 
         let valid = true;
@@ -62,6 +62,20 @@ module.exports = function (app) {
     
   app.route('/api/solve')
     .post((req, res) => {
+      try {
+        let { puzzle } = req.body;
 
+        solver.validate(puzzle);
+
+        let solution = solver.solve(puzzle);
+
+        if(solution) {
+          res.json({solution});
+        } else {
+          res.json({error: "Puzzle cannot be solved"});
+        }        
+      } catch(err) {
+        res.json(err);
+      }
     });
 };

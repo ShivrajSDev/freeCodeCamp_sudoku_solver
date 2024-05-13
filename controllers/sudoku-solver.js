@@ -57,7 +57,30 @@ class SudokuSolver {
   }
 
   solve(puzzleString) {
-    
+    if(!puzzleString.includes('.')) {
+      return puzzleString;
+    }
+
+    let i = puzzleString.indexOf('.');
+    let row =  parseInt(i / 9);
+    let column = parseInt(i % 9) + 1;
+
+    for(let n = 1; n <= 9; n++) {
+      if(!this.checkRowPlacement(puzzleString, row, column, n) || !this.checkColPlacement(puzzleString, row, column, n) 
+        || !this.checkRegionPlacement(puzzleString, row, column, n)) {
+        continue;
+      }
+
+      let updatedPuzzleString = puzzleString.split('');
+      updatedPuzzleString[i] = n;
+      let solution = this.solve(updatedPuzzleString.join(''));
+
+      if(solution) {
+        return solution;
+      }
+    }
+
+    return null;
   }
 }
 
