@@ -19,12 +19,18 @@ module.exports = function (app) {
 
       try {
         let { puzzle, coordinate, value } = req.body;
-        solver.validate(puzzle);
+        let puzzleCheck = solver.validate(puzzle);
+        if(!puzzleCheck.valid) {
+          res.json(validation.error);
+          return;
+        }
 
         if (!coordinategRegex.test(coordinate)) {
-          throw { error: "Invalid coordinate" };
+          res.json({ error: "Invalid coordinate" });
+          return;
         } else if (!valueRegex.test(value)) {
-          throw { error: "Invalid value" };
+          res.json({ error: "Invalid value" });
+          return;
         }
 
         let row = (coordinate[0].charCodeAt(0) - 65);     
@@ -67,10 +73,9 @@ module.exports = function (app) {
 
         solver.validate(puzzle);
 
-        let solution = solver.solve(puzzle);
-
-        if(solution) {
-          res.json({solution});
+        let result = solver.solve(puzzle);
+        if(result.solved) {
+          res.json({solution: result.solution});
         } else {
           res.json({error: "Puzzle cannot be solved"});
         }        

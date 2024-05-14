@@ -7,12 +7,14 @@ class SudokuSolver {
 
   validate(puzzleString) {
     if(puzzleString.length !== this.puzzleStringValidLength) {
-      throw { error: "Expected puzzle to be 81 characters long" };
+      return { valid: false, error: "Expected puzzle to be 81 characters long" };
     }
       
     if(!this.puzzleStringRegex.test(puzzleString)) {
-      throw { error: "Invalid characters in puzzle" };
+      return { valid: false, error: "Invalid characters in puzzle" };
     }
+
+    return { valid: true }
   }
 
   checkRowPlacement(puzzleString, row, column, value) {
@@ -58,7 +60,7 @@ class SudokuSolver {
 
   solve(puzzleString) {
     if(!puzzleString.includes('.')) {
-      return puzzleString;
+      return { solved: true, solution: puzzleString };
     }
 
     let i = puzzleString.indexOf('.');
@@ -73,14 +75,14 @@ class SudokuSolver {
 
       let updatedPuzzleString = puzzleString.split('');
       updatedPuzzleString[i] = n;
-      let solution = this.solve(updatedPuzzleString.join(''));
+      let result = this.solve(updatedPuzzleString.join(''));
 
-      if(solution) {
-        return solution;
+      if(result.solved) {
+        return { solved: true, solution: result.solution };
       }
     }
 
-    return null;
+    return { solved: false };
   }
 }
 
